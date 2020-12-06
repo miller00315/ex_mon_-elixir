@@ -1,6 +1,7 @@
 defmodule ExMon.Game.Actions.Attack do
   # Não esquecer de usar alias
   alias ExMon.Game
+  alias ExMon.Game.Status
 
   # Cria um range
   @move_avg_power 18..25
@@ -13,7 +14,7 @@ defmodule ExMon.Game.Actions.Attack do
     |> Game.fetch_player()
     |> Map.get(:life)
     |> calculate_total_life(damage)
-    |> update_opponent_life(opponent)
+    |> update_opponent_life(opponent, damage)
   end
 
   # Sorteia um valor na range
@@ -23,16 +24,18 @@ defmodule ExMon.Game.Actions.Attack do
   defp calculate_total_life(life, damage) when life - damage < 0, do: 0
   defp calculate_total_life(life, damage), do: life - damage
 
-  defp update_opponent_life(life, opponent),
+  defp update_opponent_life(life, opponent, damage),
     do:
       opponent
       |> Game.fetch_player()
       |> Map.put(:life, life)
-      |> update_game(opponent)
+      |> update_game(opponent, damage)
 
-  defp update_game(player, opponent),
-    do:
-      Game.info()
-      |> Map.put(opponent, player)
-      |> Game.update()
+  defp update_game(player, opponent, damage) do
+    Game.info()
+    |> Map.put(opponent, player)
+    |> Game.update()
+
+    Status.print_move_message(opponent, :attack, damage)
+  end
 end
