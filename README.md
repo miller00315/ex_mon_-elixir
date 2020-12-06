@@ -1,6 +1,6 @@
 # ExMon
 
-**TODO: Add description**
+**Aprendendo elixir com um game**
 
 ## Installation
 
